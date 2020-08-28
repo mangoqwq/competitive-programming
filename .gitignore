@@ -1,0 +1,8 @@
+*
+!.gitignore
+!*/
+!*.cpp
+!README.md
+
+test.cpp
+Untracked
