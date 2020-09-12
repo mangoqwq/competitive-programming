@@ -29,7 +29,6 @@ int main(){
     for (int x:arr){
         for (int i=m[x];i<MAXN;i+=i&-i){bit[i]++;}
         for (int i=m[x]-1;i>0;i-=i&-i){ave+=bit[i];}
-        m.erase(x);
     }
     printf("%.2f",ave/n);
 
