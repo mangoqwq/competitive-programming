@@ -1,89 +1,43 @@
-#include <iostream>
-#include <string>
-#include <queue>
-#include <vector>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
+#define ms(x,a) memset(x,a,sizeof x)
+typedef long long ll;
+const int mod=1e9+7, seed=131, MAXN=26;
 
-int graph[26][26];
+struct Edge{ int n, idx; };
+vector<Edge> adj[MAXN];
+pair<char,char> edges[MAXN*MAXN];
+bool vis[MAXN];
 
-int bfs(){
-    queue<int> line;
-    line.push(0);
-    int visited[26];
-    visited[0] = 1;
-    for (int i=1;i<26;++i){
-        visited[i] = 0;
-    }   
-    while (!line.empty()){
-        int x=line.front();
-        line.pop();
-        for (int i=0;i<26;++i){
-            if (graph[x][i] == 1){
-                if (visited[i]==0){
-                    visited[i]=1;
-                    line.push(i);
-                }
-            }
-        }
+void dfs(int v, int i){
+    vis[v]=1;
+    for (Edge x:adj[v]){
+        if (vis[x.n]||x.idx==i) continue;
+        dfs(x.n,i);
     }
-    if (visited[1] == 0){
-        return true;
-    } else{
-        return false;
-    }
-
-}
-
-int ascii(char x){
-    return (int)x-65;
 }
 
 int main(){
-    for (int i=0;i<26;++i){
-        for (int j=0;j<26;++j){
-            graph[i][j]=0;
-        }
-    }
-    string temp;
+    cin.tie(0)->sync_with_stdio(0);
+    char a, b;
+    int cnt=1;
     while (true){
-        getline(cin,temp);
-        if (temp != "**"){
-            graph[ascii(temp[0])][ascii(temp[1])]=1;
-            graph[ascii(temp[1])][ascii(temp[0])]=1;
-        } else {
-            break;
+        cin >> a >> b;
+        edges[cnt]={a,b};
+        if (a=='*') break;
+        a-='A'; b-='A';
+        adj[a].push_back({b,cnt});
+        adj[b].push_back({a,cnt++});
+    }
+    int ans=0;
+    for (int i=1;i<=cnt;++i){
+        ms(vis,0);
+        dfs(0,i);
+        if (!vis[1]){
+            printf("%c%c\n", edges[i].first, edges[i].second);
+            ans++;
         }
     }
-    vector<string> disconnecting;
-    for (int i=0;i<26;++i){
-        for (int j=0;j<26;++j){
-            if (graph[i][j]==1){
-                graph[i][j]=0;
-                graph[j][i]=0;
-
-                if (bfs()){
-                    string x(1,((char)('A'+i)));
-                    string y(1,((char)('A'+j)));
-                    if (std::find(disconnecting.begin(),disconnecting.end(),y+x)==disconnecting.end()){
-                        disconnecting.push_back(x+y);
-                    }  
-                }
-
-                graph[i][j]=1;
-                graph[j][i]=1;
-            }
-                
-        }
-    }
-    for (int i=0;i<disconnecting.size();++i){
-
-    }
-    for (int i=0;i<disconnecting.size();++i){
-        cout<<disconnecting[i]<<'\n';
-    }
-    cout << "There are " <<disconnecting.size()<<" disconnecting roads." << '\n';
-    return 0;
-
+    printf("There are %d disconnecting roads.\n", ans);
 }
