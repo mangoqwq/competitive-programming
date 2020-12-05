@@ -37,7 +37,7 @@ struct matrix{
     void print(){
         for (int i=1;i<=n;++i){
             for (int j=1;j<=n;++j){
-                printf("%-4d",m[i][j]);
+                printf("%-4d ",m[i][j]);
             }
             printf("\n");
         }
@@ -65,5 +65,6 @@ int main(){
             cin >> adj(i,j);
         }
     }
+    adj.pow(k).print();
     cout << adj.pow(k).sum() << '\n';
 }
