@@ -1,23 +1,15 @@
 #include <bits/stdc++.h>
-
 using namespace std;
-#define ms(x,a) memset(x,a,sizeof x)
-typedef long long ll;
-const int mod=1e9+7, seed=131, MAXN=101, MAXV=1e3+1;
-
-ll dp[MAXN*MAXV], tot;
-
+long long n, W, dp[100000];
 int main(){
-    cin.tie(0)->sync_with_stdio(0);
-    int n, w; cin >> n >> w;
-    ms(dp, 0x3f); dp[0]=0;
-    for (int i=1;i<=n;++i){
-        ll w, v; cin >> w >> v;
-        tot+=v;
-        for (int j=tot;j>=v;--j)
-            dp[j]=min(dp[j],dp[j-v]+w);
+    cin.sync_with_stdio(0); cin.tie(0);
+    cin >> n >> W;
+    for (int i = 0, x, y; i < n; i++){
+        cin >> x >> y;
+        for (int j = W; j >= x; j--){
+            dp[j] = max(dp[j], dp[j - x] + y);
+        }
     }
-    for (int i=tot;i>=0;--i){
-        if (dp[i]<=w){ cout << i << '\n'; break; }
-    }
+    cout << dp[W];
+    return 0;
 }
