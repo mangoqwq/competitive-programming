@@ -1,36 +1,20 @@
-#include <iostream>
-
+#include <bits/stdc++.h>
+ 
 using namespace std;
-
-int dp[251][251][251];
-
-int pieways (int piesleft, int ppl, int last)
-{
-    if (piesleft < last) return 0;
-    if (ppl == 1) return 1;
-    int ways = 0;
-    if (dp[piesleft][ppl][last]>-1){
-            ways = dp[piesleft][ppl][last];
-    }else{
-        for (int i = last; i < piesleft; ++i){
-            
-            ways += pieways(piesleft - i, ppl - 1, i);
-            }   
-    }
-    return dp[piesleft][ppl][last] = ways;
-}
-int main()
-{
-    for (int i=0;i<251;++i){
-        for (int a=0; a<251; ++a){
-            for (int b=0; b<251; ++b){
-                dp[i][a][b] = -1;
-            }
+#define ms(x,a) memset(x,a,sizeof x)
+typedef long long ll;
+const int mod=1e9+7, seed=131, MAXN=251;
+ 
+int dp[MAXN][MAXN];
+ 
+int main(){
+    cin.tie(0)->sync_with_stdio(0);
+    int n, m; cin >> n >> m;
+    dp[1][1]=1;
+    for (int j=1;j<=m;++j){
+        for (int i=1;i<=n;++i){
+            if (i>=j) dp[i][j]+=dp[i-1][j-1]+dp[i-j][j];
         }
     }
-    int pies, people;
-    cin>>pies;
-    cin>>people;
-    cout << pieways(pies,people,1);
-    return 0;
+    cout << dp[n][m] << '\n';
 }
