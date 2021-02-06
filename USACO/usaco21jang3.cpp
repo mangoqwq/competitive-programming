@@ -12,7 +12,6 @@ struct Item{
     bool operator<(const Item&other) const{
         return t<other.t;
     }
-    bool operator==(const Item&other) const{ return (t==other.t)&&(v==other.v); }
 };
 vector<Item> vis[MAXN];
 int ans[MAXN], cnt[MAXN];
