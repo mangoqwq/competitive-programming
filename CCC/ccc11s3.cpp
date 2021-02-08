@@ -30,19 +30,4 @@ int main(){
         cin >> magnification >> x >> y;
         cout << verify(magnification,x,y) << '\n';
     }
-    /*
-    for (int i=0;i<124;++i){
-        for (int k=0;k<124;++k){
-            if (verify(3,k,i)=="empty"){
-                cout << "o";
-            }
-            else{
-                cout << " ";
-            }
-            //cout << verify(2,i,k) << " ";
-        }
-        cout << '\n';
-    }
-    */
-    
 }
