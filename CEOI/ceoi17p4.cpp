@@ -31,7 +31,7 @@ ll Query(int node, int start, int end, int idx){
 int main(){
     cin.tie(0)->sync_with_stdio(0);
     int n; cin >> n;
-    for (int i=0;i<4*mn;++i) t[i]={1e12,1e12};
+    for (int i=0;i<4*mn;++i) t[i]={(ll)1e12,(ll)1e12};
     for (int i=1;i<=n;++i) cin >> h[i];
     for (int i=1;i<=n;++i) cin >> w[i];
     Insert(1,0,mm,{-2*h[1],h[1]*h[1]-w[1]}); tot=w[1];
