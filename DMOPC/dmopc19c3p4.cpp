@@ -1,48 +1,41 @@
 #include <bits/stdc++.h>
-//#pragma GCC optimize ("Ofast,unroll-loops")
 
 using namespace std;
 #define ms(x,a) memset(x,a,sizeof x)
 typedef long long ll;
-typedef pair<int,int> pii;
-const int mod=1e9+7,seed=131,MAXN=300'001;
+const int mod=1e9+7, inf=0x3f3f3f3f, MAXN=3e5+1;
 
-vector<int> graph[MAXN];
-ll dp[MAXN][2],g[MAXN][2];
-bool c[MAXN]; // 0 is blue, 1 is red
+int c[MAXN], h[MAXN];
+ll ans, up[MAXN][2];
+struct Edge{ int to, nxt; } adj[2*MAXN];
 
-void solve(int node, int prev){
-    dp[node][0]=1, dp[node][1]=1;
-    for (int x:graph[node]){
-        if (x==prev) continue;
-        solve(x,node);
-        dp[node][0]*=1+g[x][0], dp[node][0]%=mod;
-        dp[node][1]*=1+g[x][1], dp[node][1]%=mod;
+void dfs(int v, int p){
+    up[v][0]=up[v][1]=1;
+    for (int i=h[v];i;i=adj[i].nxt){
+        int to=adj[i].to;
+        if (to==p) continue;
+        dfs(to,v);
+        ans=(ans-up[to][!c[v]]+mod)%mod;
+        up[v][0]=up[v][0]*(1+up[to][0])%mod;
+        up[v][1]=up[v][1]*(1+up[to][1])%mod;
     }
-    dp[node][!c[node]]--;
-    g[node][0]=dp[node][0], g[node][1]=dp[node][1];
-    for (int x:graph[node]){
-        if (x==prev) continue;
-        dp[node][0]-=g[x][0], dp[node][0]%=mod;
-        dp[node][1]-=g[x][1], dp[node][1]%=mod;
-    }
-    for (int x:graph[node]){
-        if (x!=prev) dp[node][c[node]]+=g[x][c[x]];
-    }
+    up[v][0]=up[v][0]-1+(c[v]==0);
+    up[v][1]=up[v][1]-1+(c[v]==1);
+    ans=(ans+up[v][0]+up[v][1])%mod;
 }
 
 int main(){
-    cin.tie(0); cin.sync_with_stdio(0);
+    cin.tie(0)->sync_with_stdio(0);
     int n; cin >> n;
-    char color;
-    for (int i=1;i<=n;++i) cin >> color, c[i]=color=='R';
-    for (int i=1,a,b;i<n;++i){
-        cin >> a >> b;
-        graph[a].push_back(b);
-        graph[b].push_back(a);
-    }
-    solve(1,1);
     for (int i=1;i<=n;++i){
-        cout << i << " -> " << dp[i][0] << " " << dp[i][1] << " " << g[i][0] << " " << g[i][1] << '\n';
-    }    
+        char a; cin >> a;
+        c[i]=a=='B';
+    }
+    for (int i=1;i<=n-1;++i){
+        int a, b; cin >> a >> b;
+        adj[2*i-1]={b,h[a]}, h[a]=2*i-1;
+        adj[2*i-0]={a,h[b]}, h[b]=2*i-0;
+    }
+    dfs(1,1);
+    cout << ans << '\n';
 }
