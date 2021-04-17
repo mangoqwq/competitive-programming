@@ -8,10 +8,10 @@ const int mod=1e9+7, inf=0x3f3f3f3f, MAXN=101;
 struct Point{
     ll x, y;
     double ang() const{
-        return atan2(x,y);
+        return atan2(y,x);
     }
     bool operator<(const Point &a) const{
-        return ang()<a.ang();
+        return ang()>a.ang();
     }
 } e[MAXN], f[MAXN];
 int dp[MAXN][MAXN];
