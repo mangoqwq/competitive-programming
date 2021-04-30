@@ -26,12 +26,12 @@ int main(){
     }
     ans=curr;
     sort(eve.begin(),eve.end());
-    for (auto a:eve){
-        curr+=(a.x-pos)*(l-r);
+    for (auto [x,val]:eve){
+        curr+=(x-pos)*(l-r);
         ans=min(ans,curr);
-        pos=a.x;
-        if (a.val<0) r+=a.val;
-        else l+=a.val;
+        pos=x;
+        if (val<0) r+=val;
+        else l+=val;
     }
     cout << ans << '\n';
 }
