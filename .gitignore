@@ -2,7 +2,7 @@
 !.gitignore
 !*/
 !*/**.cpp
-!README.md
+!*/**/**.cpp
+!README.me
 
-test.cpp
 Untracked
