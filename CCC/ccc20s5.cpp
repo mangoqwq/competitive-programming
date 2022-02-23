@@ -1,27 +1,24 @@
 #include <bits/stdc++.h>
-//#pragma GCC optimize ("Ofast")
 
 using namespace std;
-#define ms(x,a) memset(x,a,sizeof x)
-typedef long long ll;
-typedef pair<int,int> pii;
-const int mod=1e9+7,seed=131,MAXN=1e6+1,MAXM=5e5+1;
-
-int arr[MAXN]; double dp[MAXM], tot; 
+#define ms(x, a) memset(x, a, sizeof x)
+using ll = long long;
+const int mod = 1e9 + 7, inf = 0x3f3f3f3f;
+const int MN = 1e6 + 1;
+int a[MN], cnt[MN];
+double dp[MN];
 
 int main(){
     cin.tie(0)->sync_with_stdio(0);
-    int n; cin >> n;
-    for (int i=1;i<=n;++i) cin >> arr[i];
-    for (int i=1;i<MAXM;++i) dp[i]=-1;
-    if (arr[1]==arr[n]){ cout << 1 << '\n'; return 0; }
-    dp[arr[1]]=1; dp[arr[n]]=0;
-    for (int i=n-1;i>=2;--i){
-        double &curr=dp[arr[i]];
-        if (!(curr<0)){ tot+=curr; continue; }
-        curr=(tot+1)*(1.0/(n-i+1));
-        tot+=curr;
+    int N; cin >> N;
+    for (int i = 1; i <= N; ++i) cin >> a[i];
+    if (a[1] == a[N]){ return cout << 1 << '\n', 0; }
+    double cur = 0;
+    dp[a[N]] = 0; cnt[a[N]]++;
+    for (int i = N - 1; i >= 1; --i){
+        if (a[i] == a[1]) dp[a[i]] = 1;
+        else if (cnt[a[i]] == 0) dp[a[i]] = (1 + cur) / (N - i + 1);
+        cnt[a[i]]++; cur += dp[a[i]];
     }
-    cout << setprecision(9) << (1.0/n)*(tot+1) << '\n';
-
+    cout << fixed << setprecision(14) << cur / N << '\n';
 }
