@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <ext/pb_ds/assoc_container.hpp>
  
 using namespace std;
 using ll = long long;
@@ -10,10 +11,10 @@ int main(){
     ll h, s; cin >> h >> s;
     if (t1 > t2) swap(p1, p2), swap(t1, t2);
  
-    vector<unordered_map<ll, ll>> mp(h+1);
+    vector<__gnu_pbds::gp_hash_table<ll, ll>> mp(h+1);
     auto solve = [&](auto self, ll h, ll c1) -> ll{
         if (h <= 0) return 0;
-        if (mp[h].count(c1)) return mp[h][c1];
+        if (mp[h].find(c1) != mp[h].end()) return mp[h][c1];
         ll &ans = mp[h][c1];
         ans = 1e18;
         ans = min(ans, (h+(p1-s)-1) / (p1-s) * t1 - c1);
