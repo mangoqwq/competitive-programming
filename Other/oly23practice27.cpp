@@ -11,12 +11,17 @@ using ll = long long;
 
 int main() {
 	cin.tie(0)->sync_with_stdio(0);
-	string A, B; cin >> A >> B;
-	for (char &c : A) c -= '0';
-	for (char &c : B) c -= '0';
-	ll ans = 0;
-	for (char a : A) for (char b : B) {
-		ans += a * b;
+	ll A, B, C, K; cin >> A >> B >> C >> K;
+	ll sum = 0;
+	{
+		ll take = min(K, A);
+		sum += take;
+		K -= take;
 	}
-	cout << ans << '\n';
+	{
+		ll take = min(K, B);
+		K -= take;
+	}
+	sum -= K;
+	cout << sum << '\n';
 }

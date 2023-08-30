@@ -11,12 +11,11 @@ using ll = long long;
 
 int main() {
 	cin.tie(0)->sync_with_stdio(0);
-	string A, B; cin >> A >> B;
-	for (char &c : A) c -= '0';
-	for (char &c : B) c -= '0';
-	ll ans = 0;
-	for (char a : A) for (char b : B) {
-		ans += a * b;
+	set<int> s;
+	int N; cin >> N;
+	for (int i = 0; i < N; ++i) {
+		int x; cin >> x;
+		s.insert(x);
 	}
-	cout << ans << '\n';
+	cout << (s.size() == N ? "YES" : "NO") << '\n';
 }
