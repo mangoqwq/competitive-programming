@@ -2,6 +2,7 @@
 !.gitignore
 !*/
 !*/**.cpp
+!*/**.py
 !*/**/**.cpp
 !README.me
 temp/*
