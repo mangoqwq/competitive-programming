@@ -12,12 +12,17 @@ using ll = long long;
 int main() {
 	cin.tie(0)->sync_with_stdio(0);
 	int N; cin >> N;
-	int ans = 0;
+	vector<int> a(N);
 	for (int i = 0; i < N; ++i) {
-		int ai; cin >> ai;
-		if (((N - 1) & i) == i) {
-			ans ^= ai;
+		cin >> a[i];
+	}
+	const int L = 30;
+	for (int i = 0; i < L; ++i) {
+		for (int x = 0; x < N; ++x) {
+			if (x & (1 << i)) a[x] ^= a[x ^ (1 << i)];
 		}
 	}
-	cout << ans << '\n';
+	for (int i = 0; i < N; ++i) {
+		cout << a[i] << (i == N - 1 ? '\n' : ' ');
+	}
 }
