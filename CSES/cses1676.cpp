@@ -1,5 +1,5 @@
 #include <bits/stdc++.h>
-
+ 
 using namespace std;
 #define ms(x, a) memset(x, a, sizeof x)
 using ll = long long;
@@ -11,11 +11,11 @@ bool Union(int a, int b){
     a = Find(a), b = Find(b);
     if (a == b) return 0;
     if (sz[b] > sz[a]) swap(a, b);
-    sz[b] += sz[a];
-    mxsz = max(mxsz, sz[b]);
+    sz[a] += sz[b];
+    mxsz = max(mxsz, sz[a]);
     return p[b] = a, 1;
 }
-
+ 
 int main(){
     cin.tie(0)->sync_with_stdio(0);
     int N, M; cin >> N >> M;

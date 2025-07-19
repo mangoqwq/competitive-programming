@@ -1,59 +1,59 @@
 #include <bits/stdc++.h>
-
+ 
 using namespace std;
-typedef long long ll;
-const int maxN = 3001;
-const ll INF = 0x3f3f3f3f3f3f3f3f;
-
-int N, K;
-ll best, p[3][maxN], dp[maxN][maxN];
-
-ll travel(int d, int a, int b){
-    return (p[d][b] - p[d][a-1]) - (p[0][b] - p[0][a-1]) * (d == 1 ? a : N-b+1);
-}
-
-ll C(int a, int b){
-    int m = (a+b)/2;
-    return travel(1, a, m) + travel(2, m+1, b);
-}
-
-int its = 0;
-
-void solve(int k, int a = 1, int b = N, int optl = 1, int optr = N){
-    if(a > b)   return;
-    int m = (a+b)/2;
-    int opt = -1;
-    dp[k][m] = INF;
-    for(int i = optl; i <= m; i++){
-        its++;
-        if(dp[k-1][i] + C(i, m) < dp[k][m]){
-            dp[k][m] = dp[k-1][i] + C(i, m);
-            opt = i;
+using ll = long long;
+ 
+int main(){
+    cin.tie(0)->sync_with_stdio(0);
+    int N, K; cin >> N >> K;
+    vector<ll> c(N);
+    for (int i = 0; i < N; ++i){
+        cin >> c[i];
+    }
+ 
+    vector<ll> cnt(N + 1), lef(N + 1), rig(N + 1);
+    for (int i = 0; i < N; ++i){
+        cnt[i + 1] = cnt[i] + c[i];
+        lef[i + 1] = lef[i] + c[i] * (N - i);
+        rig[i + 1] = rig[i] + c[i] * i;
+    }
+ 
+    vector<vector<ll>> sum_rig(N + 1, vector<ll>(N + 1));
+    vector<vector<ll>> sum_lef(N + 1, vector<ll>(N + 1));
+    for (int i = 0; i <= N; ++i){
+        for (int j = 0; j <= N; ++j){
+            sum_rig[i][j] = (rig[j] - rig[i]) - (cnt[j] - cnt[i]) * (i);
+            sum_lef[i][j] = (lef[j] - lef[i]) - (cnt[j] - cnt[i]) * (N - j + 1);
         }
     }
-    solve(k, a, m-1, optl, opt);
-    solve(k, m+1, b, opt, optr);
-}
-
-int main(){
-    freopen("txt.in", "r", stdin);
-    scanf("%d %d", &N, &K);
-    for(int i = 1; i <= N; i++){
-        ll x;
-        scanf("%lld", &x);
-        p[0][i] = p[0][i-1] + x;
-        p[1][i] = p[1][i-1] + i * x;
-        p[2][i] = p[2][i-1] + (N-i+1) * x;
+ 
+    vector<vector<ll>> dp(K + 1, vector<ll>(N, 1e18));
+    function<void(int, int, int, int, int)> solve = [&](int k, int l, int r, int ql, int qr){
+        if (l == r) return;
+        int i = (l + r) >> 1;
+        int opt = -1;
+        for (int j = ql; j < min(i, qr); ++j){
+            int m = (j + i + 1) >> 1;
+            ll val = (j == 0 ? 0 : dp[k - 1][j]) + sum_rig[j][m] + sum_lef[m][i + 1];
+            if (val < dp[k][i]){
+                dp[k][i] = val;
+                opt = j;
+            }
+        }
+        solve(k, l, i, ql, opt + 1);
+        solve(k, i + 1, r, opt, qr);
+    };
+ 
+    for (int i = 0; i < N; ++i){
+        dp[1][i] = sum_lef[0][i + 1];
     }
-
-    for(int i = 1; i <= N; i++)
-        dp[1][i] = travel(2, 1, i);
-    for(int k = 2; k <= K; k++)
-        solve(k);
-
-    best = INF;
-    for(int i = 1; i <= N; i++)
-        best = min(best, dp[K][i] + travel(1, i, N));
-    printf("%lld\n", best);
-    cerr << its << '\n';
+    for (int k = 2; k <= K; ++k){
+        solve(k, 0, N, 0, N);
+    }
+ 
+    ll ans = 1e18;
+    for (int i = 0; i < N; ++i){
+        ans = min(ans, dp[K][i] + sum_rig[i][N]);
+    }
+    cout << ans << '\n';
 }

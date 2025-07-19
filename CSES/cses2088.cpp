@@ -1,59 +1,37 @@
 #include <bits/stdc++.h>
-
+ 
 using namespace std;
-typedef long long ll;
-const int maxN = 3001;
-const ll INF = 0x3f3f3f3f3f3f3f3f;
-
-int N, K;
-ll best, p[3][maxN], dp[maxN][maxN];
-
-ll travel(int d, int a, int b){
-    return (p[d][b] - p[d][a-1]) - (p[0][b] - p[0][a-1]) * (d == 1 ? a : N-b+1);
-}
-
-ll C(int a, int b){
-    int m = (a+b)/2;
-    return travel(1, a, m) + travel(2, m+1, b);
-}
-
-int its = 0;
-
-void solve(int k, int a = 1, int b = N, int optl = 1, int optr = N){
-    if(a > b)   return;
-    int m = (a+b)/2;
-    int opt = -1;
-    dp[k][m] = INF;
-    for(int i = optl; i <= m; i++){
-        its++;
-        if(dp[k-1][i] + C(i, m) < dp[k][m]){
-            dp[k][m] = dp[k-1][i] + C(i, m);
-            opt = i;
+using ll = long long;
+ 
+int main(){
+    cin.tie(0)->sync_with_stdio(0);
+    int N; cin >> N;
+    vector<ll> a(N + 1), psa(N + 1);
+    for (int i = 0; i < N; ++i){
+        cin >> a[i];
+    }
+    for (int i = 0; i < N; ++i){
+        psa[i + 1] = psa[i] + a[i];
+    }
+ 
+    vector<vector<ll>> dp(N + 1, vector<ll>(N, 1e18));
+    vector<vector<ll>> opt(N + 1, vector<ll>(N));
+    for (int i = 0; i < N; ++i){
+        dp[i][i] = 0;
+        opt[i][i] = i;
+    }
+    for (int len = 2; len <= N; ++len){
+        for (int l = 0; l + len - 1 < N; ++l){
+            int r = l + len - 1;
+#pragma GCC ivdep
+            for (int i = opt[l][r - 1]; i <= opt[l + 1][r]; ++i){
+                ll c = dp[l][i] + dp[i + 1][r] + psa[r + 1] - psa[l];
+                if (c < dp[l][r]){
+                    dp[l][r] = c;
+                    opt[l][r] = i;
+                }
+            }
         }
     }
-    solve(k, a, m-1, optl, opt);
-    solve(k, m+1, b, opt, optr);
-}
-
-int main(){
-    freopen("txt.in", "r", stdin);
-    scanf("%d %d", &N, &K);
-    for(int i = 1; i <= N; i++){
-        ll x;
-        scanf("%lld", &x);
-        p[0][i] = p[0][i-1] + x;
-        p[1][i] = p[1][i-1] + i * x;
-        p[2][i] = p[2][i-1] + (N-i+1) * x;
-    }
-
-    for(int i = 1; i <= N; i++)
-        dp[1][i] = travel(2, 1, i);
-    for(int k = 2; k <= K; k++)
-        solve(k);
-
-    best = INF;
-    for(int i = 1; i <= N; i++)
-        best = min(best, dp[K][i] + travel(1, i, N));
-    printf("%lld\n", best);
-    cerr << its << '\n';
+    cout << dp[0][N - 1] << '\n';
 }

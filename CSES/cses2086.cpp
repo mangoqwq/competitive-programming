@@ -63,7 +63,7 @@ struct SparseLichao{
     pair<ll, int> query(int v, ll x, int l, int r){
         pair<ll, int> ret = {1e18, 0};
         while (true){
-            ret = min(ret, {arr[v].f.eval(x), arr[v].f.cnt});
+            ret = min(ret, {arr[v].f.eval(x), -arr[v].f.cnt});
             if (x <= mid){
                 r = mid;
                 if (arr[v].lc == 0) break;
@@ -75,6 +75,7 @@ struct SparseLichao{
                 v = arr[v].rc;
             }
         }
+        ret.second *= -1;
         return ret;
     }
     pair<ll, int> query(ll x){ return query(0, x, 0, N - 1); }
@@ -82,7 +83,6 @@ struct SparseLichao{
  
 int main(){
     cin.tie(0)->sync_with_stdio(0);
-    freopen("txt.in", "r", stdin);
     int N, K; cin >> N >> K;
     vector<ll> x(N);
     for (int i = 0; i < N; ++i){
@@ -106,11 +106,10 @@ int main(){
  
     ll lo = 0, hi = 1e18;
     while (lo < hi){
-        ll mi = (lo + hi) >> 1;
-        if (solve(mi).second <= K) hi = mi;
-        else lo = mi + 1;
+        ll mi = (lo + hi + 1) >> 1;
+        if (solve(mi).second >= K) lo = mi;
+        else hi = mi - 1;
     }
     pair<ll, int> ans = solve(lo);
-    cout << ans.second << " ";
     cout << ans.first - lo * K << '\n';
 }

@@ -1,20 +1,20 @@
 #include <bits/stdc++.h>
-
+ 
 using namespace std;
 using ll = long long;
-
+ 
 #ifdef _DEBUG
 #include "utils/debug.h"
 #else
 #define debug(...)
 #endif
-
+ 
 // Source: atcoder library
 // https://atcoder.github.io/ac-library/production/document_en/mincostflow.html
 namespace atcoder {
-
+ 
 namespace internal {
-
+ 
 template <class T>
 struct simple_queue {
 	std::vector<T> payload;
@@ -30,7 +30,7 @@ struct simple_queue {
 	}
 	void pop() { pos++; }
 };
-
+ 
 template <class E>
 struct csr {
 	std::vector<int> start;
@@ -49,15 +49,15 @@ struct csr {
 		}
 	}
 };
-
+ 
 }	 // namespace internal
-
+ 
 template <class Cap, class Cost>
 struct mcf_graph {
  public:
 	mcf_graph() {}
 	explicit mcf_graph(int n) : _n(n) {}
-
+ 
 	int add_edge(int from, int to, Cap cap, Cost cost) {
 		assert(0 <= from && from < _n);
 		assert(0 <= to && to < _n);
@@ -67,20 +67,20 @@ struct mcf_graph {
 		_edges.push_back({from, to, cap, 0, cost});
 		return m;
 	}
-
+ 
 	struct edge {
 		int from, to;
 		Cap cap, flow;
 		Cost cost;
 	};
-
+ 
 	edge get_edge(int i) {
 		int m = int(_edges.size());
 		assert(0 <= i && i < m);
 		return _edges[i];
 	}
 	std::vector<edge> edges() { return _edges; }
-
+ 
 	std::pair<Cap, Cost> flow(int s, int t) {
 		return flow(s, t, std::numeric_limits<Cap>::max());
 	}
@@ -94,10 +94,10 @@ struct mcf_graph {
 		assert(0 <= s && s < _n);
 		assert(0 <= t && t < _n);
 		assert(s != t);
-
+ 
 		int m = int(_edges.size());
 		std::vector<int> edge_idx(m);
-
+ 
 		auto g = [&]() {
 			std::vector<int> degree(_n), redge_idx(m);
 			std::vector<std::pair<int, _edge>> elist;
@@ -119,34 +119,34 @@ struct mcf_graph {
 			}
 			return _g;
 		}();
-
+ 
 		auto result = slope(g, s, t, flow_limit);
-
+ 
 		for (int i = 0; i < m; i++) {
 			auto e = g.elist[edge_idx[i]];
 			_edges[i].flow = _edges[i].cap - e.cap;
 		}
-
+ 
 		return result;
 	}
-
+ 
  private:
 	int _n;
 	std::vector<edge> _edges;
-
+ 
 	// inside edge
 	struct _edge {
 		int to, rev;
 		Cap cap;
 		Cost cost;
 	};
-
+ 
 	std::vector<std::pair<Cap, Cost>> slope(internal::csr<_edge>& g, int s, int t,
 																					Cap flow_limit) {
 		// variants (C = maxcost):
 		// -(n-1)C <= dual[s] <= dual[i] <= dual[t] = 0
 		// reduced cost (= e.cost + dual[e.from] - dual[e.to]) >= 0 for all edge
-
+ 
 		// dual_dist[i] = (dual[i], dist[i])
 		std::vector<std::pair<Cost, Cost>> dual_dist(_n);
 		std::vector<int> prev_e(_n);
@@ -165,10 +165,10 @@ struct mcf_graph {
 			std::fill(vis.begin(), vis.end(), false);
 			que_min.clear();
 			que.clear();
-
+ 
 			// que[0..heap_r) was heapified
 			size_t heap_r = 0;
-
+ 
 			dual_dist[s].second = 0;
 			que_min.push_back(s);
 			while (!que_min.empty() || !que.empty()) {
@@ -214,7 +214,7 @@ struct mcf_graph {
 			if (!vis[t]) {
 				return false;
 			}
-
+ 
 			for (int v = 0; v < _n; v++) {
 				if (!vis[v]) continue;
 				// dual[v] = dual[v] - dist[t] + dist[v]
@@ -252,18 +252,18 @@ struct mcf_graph {
 		return result;
 	}
 };
-
+ 
 }	 // namespace atcoder
 using namespace atcoder;
-
+ 
 /*
 run min-cost max-flow with k flow and repeatedly run dfs to get paths back
 */
-
+ 
 int main() {
 	cin.tie(0)->sync_with_stdio(0);
 	int N, M, K; cin >> N >> M >> K;
-
+ 
 	mcf_graph<int, int> g(N);
 	struct Edge{ int to, id; };
 	vector<vector<Edge>> adj(N);
@@ -273,16 +273,17 @@ int main() {
 		adj[a].push_back({b, i});
 		g.add_edge(a, b, 1, 1);
 	}
-
+ 
 	auto [paths, cost] = g.flow(0, N-1, K);
 	if (paths < K) {
 		cout << -1 << '\n';
+		return 0;
 	}
 	vector<int> flow(M);
 	for (int i = 0; i < M; ++i) {
 		flow[i] = g.get_edge(i).flow;
 	}
-
+ 
 	vector<int> path;
 	auto dfs = [&](auto self, int v) -> void {
 		path.push_back(v);

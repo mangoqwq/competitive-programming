@@ -4,112 +4,60 @@ using namespace std;
 using ll = long long;
  
 struct Function{
-    ll m, b; int cnt;
-    ll eval(ll x){
+    ll m, b;
+    ll operator()(ll x){
         return m * x + b;
     }
 };
-const Function e = {0, (ll)1e18};
  
-struct SparseLichao{
+struct Lichao{
  
 #define mid ((l + r) >> 1)
+#define lc (v + 1)
+#define rc (v + 2 * (mid - l + 1))
  
     int N;
-    struct Node{
-        Function f;
-        int lc, rc;
-    };
-    vector<Node> arr;
+    vector<Function> st;
  
-    SparseLichao() = default;
-    SparseLichao(int N) : N(N){
-        arr.push_back({e, 0, 0});
+    Lichao(int N) : N(N){
+        st.assign(2 * N, Function{(ll)1e12, (ll)1e12});
     }
  
-    void extendl(int v){
-        if (!arr[v].lc){
-            arr[v].lc = arr.size();
-            arr.push_back({e, 0, 0});
-        }
+    void insert(Function f, int v, int l, int r){
+        bool cl = f(l) < st[v](l);
+        bool cm = f(mid) < st[v](mid);
+        if (cm) swap(f, st[v]);
+        if (l == r) return;
+        if (cl != cm) insert(f, lc, l, mid);
+        else insert(f, rc, mid + 1, r);
     }
-    void extendr(int v){
-        if (!arr[v].rc){
-            arr[v].rc = arr.size();
-            arr.push_back({e, 0, 0});
-        }
-    }
+    void insert(Function f){ insert(f, 1, 0, N - 1); }
  
-    void insert(int v, int l, int r, Function f){
-        while (true){
-            bool bl = f.eval(l) < arr[v].f.eval(l);
-            bool bm = f.eval(mid) < arr[v].f.eval(mid);
-            if (bm) swap(arr[v].f, f);
-            if (l == r || f.b == 1e18) return;
-            if (bl != bm){
-                extendl(v);
-                r = mid;
-                v = arr[v].lc;
-            }
-            else{
-                extendr(v);
-                l = mid + 1;
-                v = arr[v].rc;
-            }
-        }
+    ll query(int x, int v, int l, int r){
+        if (l == r) return st[v](x);
+        if (x <= mid) return min(st[v](x), query(x, lc, l, mid));
+        else return min(st[v](x), query(x, rc, mid + 1, r));
     }
-    void insert(Function f){ return insert(0, 0, N - 1, f); }
- 
-    pair<ll, int> query(int v, ll x, int l, int r){
-        pair<ll, int> ret = {1e18, 0};
-        while (true){
-            ret = min(ret, {arr[v].f.eval(x), -arr[v].f.cnt});
-            if (x <= mid){
-                r = mid;
-                if (arr[v].lc == 0) break;
-                v = arr[v].lc;
-            }
-            else{
-                l = mid + 1;
-                if (arr[v].rc == 0) break;
-                v = arr[v].rc;
-            }
-        }
-        ret.second *= -1;
-        return ret;
-    }
-    pair<ll, int> query(ll x){ return query(0, x, 0, N - 1); }
+    ll query(int x){ return query(x, 1, 0, N - 1); }
 };
  
 int main(){
     cin.tie(0)->sync_with_stdio(0);
-    int N, K; cin >> N >> K;
-    vector<ll> x(N);
+    int N, si; cin >> N >> si;
+    vector<int> s(N), f(N);
     for (int i = 0; i < N; ++i){
-        cin >> x[i];
-        if (i) x[i] += x[i - 1];
+        cin >> s[i];
+    }
+    for (int i = 0; i < N; ++i){
+        cin >> f[i];
     }
  
-    function<pair<ll, int>(ll)> solve = [&](ll lmd) -> pair<ll, int>{
-        vector<ll> dp(N);
-        vector<int> cnt(N);
-        SparseLichao lct(3e8 + 1);
-        lct.insert({0, 0});
-        for (int i = 0; i < N; ++i){
-            pair<ll, int> res = lct.query(x[i]);
-            cnt[i] = res.second + 1;
-            dp[i] = res.first + x[i] * x[i] + lmd;
-            lct.insert({-2 * x[i], x[i] * x[i] + dp[i], cnt[i]});
-        }
-        return {dp[N - 1], cnt[N - 1]};
-    };
- 
-    ll lo = 0, hi = 1e18;
-    while (lo < hi){
-        ll mi = (lo + hi + 1) >> 1;
-        if (solve(mi).second >= K) lo = mi;
-        else hi = mi - 1;
+    Lichao lct(1e6 + 1);
+    lct.insert(Function{si, 0});
+    vector<ll> dp(N);
+    for (int i = 0; i < N; ++i){
+        dp[i] = lct.query(s[i]);
+        lct.insert({f[i], dp[i]});
     }
-    pair<ll, int> ans = solve(lo);
-    cout << ans.first - lo * K << '\n';
+    cout << dp[N - 1] << '\n';
 }
