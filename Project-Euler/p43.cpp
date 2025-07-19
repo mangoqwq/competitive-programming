@@ -1,0 +1,5 @@
+words = input().replace('"', '').split(',')
+vals = map(lambda word: sum(map(lambda x: ord(x) - ord('A') + 1, word)), words)
+triangles = set([n * (n + 1) // 2 for n in range(1, 100)])
+triangle_words = list(filter(lambda x: x in triangles, vals))
+print(len(triangle_words))
